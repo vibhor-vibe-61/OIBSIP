@@ -5,6 +5,12 @@ A features-packed, object-oriented console application developed as part of the 
 
 ---
 
+## 🔗 Presentation & Social Links
+- 🎥 **LinkedIn Demo Post:** [View LinkedIn Post & Demo Video](https://lnkd.in/p/ddcc7C-J)
+- 📁 **GitHub Repository:** [vibhor-vibe-61/OIBSIP](https://github.com/vibhor-vibe-61/OIBSIP)
+
+---
+
 ## ⭐ Core Features
 
 - 🎯 **Random Number Generation:** Dynamic range assignment per difficulty level (`1-50`, `1-100`, `1-200`).
