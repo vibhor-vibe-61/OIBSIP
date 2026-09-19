@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- * Feature 3: Attempt Tracking & Game Over Logic
+ * Feature 4: Previous Guess Tracking & Duplicate Protection
  */
 public class NumberGuessingGame {
 
@@ -126,7 +126,7 @@ public class NumberGuessingGame {
     }
 
     /**
-     * Feature 3: Detailed attempt tracking with current attempt # vs max attempts and loss reveal logic.
+     * Feature 4: Uses ArrayList<Integer> history to display past attempts & prevents duplicate attempt deduction.
      */
     private static int playRound(Scanner scanner, DifficultyConfig config, int secretTarget) {
         List<Integer> history = new ArrayList<>();
@@ -141,7 +141,7 @@ public class NumberGuessingGame {
             System.out.println("Attempt " + currentAttemptNum + " of " + config.getMaxAttempts() + " (Remaining: " + remainingAttempts + ")");
 
             if (!history.isEmpty()) {
-                System.out.println("Previous guesses: " + history);
+                System.out.println("Previous guesses: " + history.toString());
             }
 
             Integer guess = getUserGuess(scanner, history, config.getMaxRange());
@@ -173,6 +173,9 @@ public class NumberGuessingGame {
         }
     }
 
+    /**
+     * Feature 4: Validates guess against previous history list. Rejects duplicate inputs without consuming attempts.
+     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
             System.out.print("Enter your guess (1-" + maxRange + "): ");
@@ -196,7 +199,8 @@ public class NumberGuessingGame {
                 }
 
                 if (history.contains(guess)) {
-                    System.out.println("[WARNING] You already guessed " + guess + "!");
+                    System.out.println("[WARNING] You already guessed " + guess + "! Duplicates do not consume an attempt. Try a new number.");
+                    continue;
                 }
 
                 return guess;
