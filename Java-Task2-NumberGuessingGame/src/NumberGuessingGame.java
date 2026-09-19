@@ -7,25 +7,19 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- *
- * Features:
- * - Difficulty levels (Easy, Medium, Hard)
- * - Dynamic attempt bounds & scoring rules
- * - High/Low hints & duplicate guess tracking
- * - Input validation & robust exception handling
- * - Multi-round play with persistent total score
+ * Feature 1: Difficulty Level System Implementation
  */
 public class NumberGuessingGame {
 
     /**
-     * Immutable data object encapsulating difficulty attributes.
+     * Encapsulates difficulty configurations: Range, Attempt limit, and Scoring parameters.
      */
     static class DifficultyConfig {
-        final String name;
-        final int maxRange;
-        final int maxAttempts;
-        final int baseScore;
-        final int penaltyPerAttempt;
+        private final String name;
+        private final int maxRange;
+        private final int maxAttempts;
+        private final int baseScore;
+        private final int penaltyPerAttempt;
 
         public DifficultyConfig(String name, int maxRange, int maxAttempts, int baseScore, int penaltyPerAttempt) {
             this.name = name;
@@ -34,6 +28,12 @@ public class NumberGuessingGame {
             this.baseScore = baseScore;
             this.penaltyPerAttempt = penaltyPerAttempt;
         }
+
+        public String getName() { return name; }
+        public int getMaxRange() { return maxRange; }
+        public int getMaxAttempts() { return maxAttempts; }
+        public int getBaseScore() { return baseScore; }
+        public int getPenaltyPerAttempt() { return penaltyPerAttempt; }
     }
 
     public static void main(String[] args) {
@@ -57,18 +57,19 @@ public class NumberGuessingGame {
                 break;
             }
 
-            int secretTarget = random.nextInt(config.maxRange) + 1;
+            int secretTarget = random.nextInt(config.getMaxRange()) + 1;
 
-            System.out.println("\n[SYSTEM] Difficulty set to: " + config.name.toUpperCase());
-            System.out.println("[SYSTEM] I have selected a number between 1 and " + config.maxRange + ".");
-            System.out.println("[SYSTEM] You have " + config.maxAttempts + " attempts to guess it. Good luck!");
+            System.out.println("\n[SYSTEM] Difficulty selected: " + config.getName().toUpperCase());
+            System.out.println("[SYSTEM] Target range      : 1 to " + config.getMaxRange());
+            System.out.println("[SYSTEM] Attempts granted   : " + config.getMaxAttempts());
+            System.out.println("[SYSTEM] Potential score   : " + config.getBaseScore() + " pts");
 
             int roundScore = playRound(scanner, config, secretTarget);
             totalScore += roundScore;
 
             System.out.println("\n------------------------------------------");
-            System.out.println("Round " + roundNumber + " Points Earned: " + roundScore);
-            System.out.println("Cumulative Total Score : " + totalScore + " points");
+            System.out.println("Round " + roundNumber + " Score : " + roundScore);
+            System.out.println("Total Score   : " + totalScore + " points");
             System.out.println("------------------------------------------");
 
             keepPlaying = askPlayAgain(scanner);
@@ -85,9 +86,6 @@ public class NumberGuessingGame {
         scanner.close();
     }
 
-    /**
-     * Displays application welcome header.
-     */
     private static void printWelcomeBanner() {
         System.out.println("==========================================");
         System.out.println("       *** NUMBER GUESSING GAME ***");
@@ -96,7 +94,7 @@ public class NumberGuessingGame {
     }
 
     /**
-     * Displays difficulty menu and prompts user with strict input validation.
+     * Prompts user for difficulty selection and returns selected DifficultyConfig.
      */
     private static DifficultyConfig selectDifficulty(Scanner scanner) {
         while (true) {
@@ -125,25 +123,21 @@ public class NumberGuessingGame {
         }
     }
 
-    /**
-     * Executes a single round of the game. Returns the score earned in this round.
-     */
     private static int playRound(Scanner scanner, DifficultyConfig config, int secretTarget) {
         List<Integer> history = new ArrayList<>();
         int attemptsUsed = 0;
         boolean guessedCorrectly = false;
 
-        while (attemptsUsed < config.maxAttempts) {
-            int remainingAttempts = config.maxAttempts - attemptsUsed;
+        while (attemptsUsed < config.getMaxAttempts()) {
+            int remainingAttempts = config.getMaxAttempts() - attemptsUsed;
             System.out.println("\n------------------------------------------");
             if (!history.isEmpty()) {
                 System.out.println("Previous guesses: " + history);
             }
             System.out.println("Attempts remaining: " + remainingAttempts);
 
-            Integer guess = getUserGuess(scanner, history, config.maxRange);
+            Integer guess = getUserGuess(scanner, history, config.getMaxRange());
             if (guess == null) {
-                System.out.println("[!] Input stream closed. Exiting round.");
                 return 0;
             }
 
@@ -171,9 +165,6 @@ public class NumberGuessingGame {
         }
     }
 
-    /**
-     * Handles console input for a guess with validation and duplicate warning.
-     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
             System.out.print("Enter your guess (1-" + maxRange + "): ");
@@ -197,7 +188,7 @@ public class NumberGuessingGame {
                 }
 
                 if (history.contains(guess)) {
-                    System.out.println("[!] You already guessed " + guess + "! (Duplicate guesses still count towards attempt limit)");
+                    System.out.println("[!] You already guessed " + guess + "!");
                 }
 
                 return guess;
@@ -208,18 +199,12 @@ public class NumberGuessingGame {
         }
     }
 
-    /**
-     * Calculates score earned for a round based on difficulty and attempts taken.
-     */
     private static int calculateRoundScore(DifficultyConfig config, int attemptsUsed) {
-        int penalty = (attemptsUsed - 1) * config.penaltyPerAttempt;
-        int score = config.baseScore - penalty;
-        return Math.max(score, 10); // Minimum 10 points for winning
+        int penalty = (attemptsUsed - 1) * config.getPenaltyPerAttempt();
+        int score = config.getBaseScore() - penalty;
+        return Math.max(score, 10);
     }
 
-    /**
-     * Asks user if they wish to play another round with input validation.
-     */
     private static boolean askPlayAgain(Scanner scanner) {
         while (true) {
             System.out.print("\nWould you like to play another round? (Y/N): ");
