@@ -6,7 +6,7 @@ A features-packed, object-oriented console application developed as part of the 
 ---
 
 ## 🔗 Presentation & Social Links
-- 🎥 **LinkedIn Demo Post:** [View LinkedIn Post & Demo Video](https://lnkd.in/p/ddcc7C-J)
+- 🌐 **LinkedIn Post:** [View LinkedIn Post](https://lnkd.in/p/ddcc7C-J)
 - 📁 **GitHub Repository:** [vibhor-vibe-61/OIBSIP](https://github.com/vibhor-vibe-61/OIBSIP)
 
 ---
@@ -85,21 +85,6 @@ java -cp bin NumberGuessingGame
 | Non-Numeric Input | `"abc"` | `[!] Invalid input format. Please enter a valid integer.` | PASS |
 | Duplicate Guess | Repeat same guess | `[!] You already guessed X!` | PASS |
 | Replay Game | `Y` | Starts Round 2 with total score retained | PASS |
-
----
-
-## 🎬 2-Second Title Card & Demo Video Format
-
-Per Oasis Infobyte instructions, the demo video begins with a static 2-second title card:
-
-```text
-==================================================
-Intern Name  : Tekriwal Vibhor Vijay
-Domain       : Java Development
-Task Name    : Task 2 — Number Guessing Game
-Repository   : OIBSIP
-==================================================
-```
 
 ---
 
