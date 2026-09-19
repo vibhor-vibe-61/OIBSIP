@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- * Feature 2: Input Validation & Crash Prevention Engine
+ * Feature 3: Attempt Tracking & Game Over Logic
  */
 public class NumberGuessingGame {
 
@@ -93,9 +93,6 @@ public class NumberGuessingGame {
         System.out.println("==========================================");
     }
 
-    /**
-     * Feature 2: Validates difficulty selection against invalid options and non-numeric entries.
-     */
     private static DifficultyConfig selectDifficulty(Scanner scanner) {
         while (true) {
             System.out.println("\nSelect Difficulty Level:");
@@ -128,18 +125,24 @@ public class NumberGuessingGame {
         }
     }
 
+    /**
+     * Feature 3: Detailed attempt tracking with current attempt # vs max attempts and loss reveal logic.
+     */
     private static int playRound(Scanner scanner, DifficultyConfig config, int secretTarget) {
         List<Integer> history = new ArrayList<>();
         int attemptsUsed = 0;
         boolean guessedCorrectly = false;
 
         while (attemptsUsed < config.getMaxAttempts()) {
+            int currentAttemptNum = attemptsUsed + 1;
             int remainingAttempts = config.getMaxAttempts() - attemptsUsed;
+
             System.out.println("\n------------------------------------------");
+            System.out.println("Attempt " + currentAttemptNum + " of " + config.getMaxAttempts() + " (Remaining: " + remainingAttempts + ")");
+
             if (!history.isEmpty()) {
                 System.out.println("Previous guesses: " + history);
             }
-            System.out.println("Attempts remaining: " + remainingAttempts);
 
             Integer guess = getUserGuess(scanner, history, config.getMaxRange());
             if (guess == null) {
@@ -152,7 +155,7 @@ public class NumberGuessingGame {
             if (guess == secretTarget) {
                 guessedCorrectly = true;
                 System.out.println("\n[SUCCESS] CONGRATULATIONS! You guessed the correct number (" + secretTarget + ")!");
-                System.out.println("[SUCCESS] Solved in " + attemptsUsed + " attempt(s).");
+                System.out.println("[SUCCESS] Solved in " + attemptsUsed + " attempt(s) out of " + config.getMaxAttempts() + ".");
                 break;
             } else if (guess < secretTarget) {
                 System.out.println("[HINT] Too Low! Try a higher number.");
@@ -164,15 +167,12 @@ public class NumberGuessingGame {
         if (guessedCorrectly) {
             return calculateRoundScore(config, attemptsUsed);
         } else {
-            System.out.println("\n[GAME OVER] You ran out of attempts!");
+            System.out.println("\n[GAME OVER] You ran out of attempts (" + config.getMaxAttempts() + "/" + config.getMaxAttempts() + ")!");
             System.out.println("[GAME OVER] The secret number was: " + secretTarget);
             return 0;
         }
     }
 
-    /**
-     * Feature 2: Safe input parser rejecting non-integer text, empty lines, and out-of-range bounds.
-     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
             System.out.print("Enter your guess (1-" + maxRange + "): ");
@@ -213,9 +213,6 @@ public class NumberGuessingGame {
         return Math.max(score, 10);
     }
 
-    /**
-     * Feature 2: Validates play-again input prompt against unexpected responses.
-     */
     private static boolean askPlayAgain(Scanner scanner) {
         while (true) {
             System.out.print("\nWould you like to play another round? (Y/N): ");
