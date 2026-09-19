@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- * Feature 5: Multi-Round Score System & Non-Negative Score Engine
+ * Feature 6: Final Console UI Polish & Professional Presentation
  */
 public class NumberGuessingGame {
 
@@ -47,30 +47,22 @@ public class NumberGuessingGame {
         boolean keepPlaying = true;
 
         while (keepPlaying) {
-            System.out.println("\n==========================================");
-            System.out.println("            ROUND " + roundNumber);
-            System.out.println("==========================================");
+            printRoundHeader(roundNumber);
 
             DifficultyConfig config = selectDifficulty(scanner);
             if (config == null) {
-                System.out.println("[SYSTEM] Program terminated gracefully.");
+                System.out.println("\n[SYSTEM] Program terminated gracefully. Goodbye!");
                 break;
             }
 
             int secretTarget = random.nextInt(config.getMaxRange()) + 1;
 
-            System.out.println("\n[SYSTEM] Difficulty selected: " + config.getName().toUpperCase());
-            System.out.println("[SYSTEM] Target range      : 1 to " + config.getMaxRange());
-            System.out.println("[SYSTEM] Attempts granted   : " + config.getMaxAttempts());
-            System.out.println("[SYSTEM] Potential base score: " + config.getBaseScore() + " pts");
+            printDifficultySummary(config);
 
             int roundScore = playRound(scanner, config, secretTarget);
             totalScore += roundScore;
 
-            System.out.println("\n------------------------------------------");
-            System.out.println("Round " + roundNumber + " Score Earned : " + roundScore + " points");
-            System.out.println("Cumulative Total Score : " + totalScore + " points");
-            System.out.println("------------------------------------------");
+            printRoundScoreSummary(roundNumber, roundScore, totalScore);
 
             keepPlaying = askPlayAgain(scanner);
             if (keepPlaying) {
@@ -78,28 +70,53 @@ public class NumberGuessingGame {
             }
         }
 
-        System.out.println("\n==========================================");
-        System.out.println("        THANKS FOR PLAYING!");
-        System.out.println("  Final Total Score: " + totalScore + " points");
-        System.out.println("==========================================");
+        printFinalSummary(totalScore);
 
         scanner.close();
     }
 
+    /**
+     * UI Component: Welcome Header
+     */
     private static void printWelcomeBanner() {
-        System.out.println("==========================================");
-        System.out.println("       *** NUMBER GUESSING GAME ***");
-        System.out.println("     Oasis Infobyte Java Internship");
-        System.out.println("==========================================");
+        System.out.println("==================================================");
+        System.out.println("          *** NUMBER GUESSING GAME ***");
+        System.out.println("     Oasis Infobyte Java Development Track");
+        System.out.println("          Author: Tekriwal Vibhor Vijay");
+        System.out.println("==================================================");
     }
 
+    /**
+     * UI Component: Round Header
+     */
+    private static void printRoundHeader(int roundNumber) {
+        System.out.println("\n==================================================");
+        System.out.println("                   ROUND " + roundNumber);
+        System.out.println("==================================================");
+    }
+
+    /**
+     * UI Component: Difficulty Summary
+     */
+    private static void printDifficultySummary(DifficultyConfig config) {
+        System.out.println("\n--------------------------------------------------");
+        System.out.println(" [CONFIG] Mode Selected   : " + config.getName().toUpperCase());
+        System.out.println(" [CONFIG] Target Range    : 1 to " + config.getMaxRange());
+        System.out.println(" [CONFIG] Attempt Limit   : " + config.getMaxAttempts() + " attempts");
+        System.out.println(" [CONFIG] Potential Score : " + config.getBaseScore() + " pts");
+        System.out.println("--------------------------------------------------");
+    }
+
+    /**
+     * UI Component: Difficulty Selector Menu
+     */
     private static DifficultyConfig selectDifficulty(Scanner scanner) {
         while (true) {
-            System.out.println("\nSelect Difficulty Level:");
+            System.out.println("\n[MENU] Select Difficulty Level:");
             System.out.println("  1. Easy   (Range: 1-50,  Attempts: 10, Base Score: 100)");
             System.out.println("  2. Medium (Range: 1-100, Attempts: 7,  Base Score: 150)");
             System.out.println("  3. Hard   (Range: 1-200, Attempts: 5,  Base Score: 200)");
-            System.out.print("Enter choice (1-3): ");
+            System.out.print(">>> Enter choice (1-3): ");
 
             if (!scanner.hasNextLine()) {
                 return null;
@@ -108,7 +125,7 @@ public class NumberGuessingGame {
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
-                System.out.println("[ERROR] Choice cannot be empty. Please enter 1, 2, or 3.");
+                System.out.println(" [ERROR] Choice cannot be empty. Please enter 1, 2, or 3.");
                 continue;
             }
 
@@ -120,11 +137,14 @@ public class NumberGuessingGame {
                 case "3":
                     return new DifficultyConfig("Hard", 200, 5, 200, 25);
                 default:
-                    System.out.println("[ERROR] Invalid choice '" + input + "'. Please enter 1, 2, or 3.");
+                    System.out.println(" [ERROR] Invalid choice '" + input + "'. Please enter 1, 2, or 3.");
             }
         }
     }
 
+    /**
+     * Core Round Execution Loop
+     */
     private static int playRound(Scanner scanner, DifficultyConfig config, int secretTarget) {
         List<Integer> history = new ArrayList<>();
         int attemptsUsed = 0;
@@ -134,11 +154,11 @@ public class NumberGuessingGame {
             int currentAttemptNum = attemptsUsed + 1;
             int remainingAttempts = config.getMaxAttempts() - attemptsUsed;
 
-            System.out.println("\n------------------------------------------");
-            System.out.println("Attempt " + currentAttemptNum + " of " + config.getMaxAttempts() + " (Remaining: " + remainingAttempts + ")");
+            System.out.println("\n--------------------------------------------------");
+            System.out.println(" Attempt " + currentAttemptNum + " of " + config.getMaxAttempts() + " | Remaining: " + remainingAttempts);
 
             if (!history.isEmpty()) {
-                System.out.println("Previous guesses: " + history.toString());
+                System.out.println(" Previous Guesses: " + history.toString());
             }
 
             Integer guess = getUserGuess(scanner, history, config.getMaxRange());
@@ -151,32 +171,35 @@ public class NumberGuessingGame {
 
             if (guess == secretTarget) {
                 guessedCorrectly = true;
-                System.out.println("\n[SUCCESS] CONGRATULATIONS! You guessed the correct number (" + secretTarget + ")!");
-                System.out.println("[SUCCESS] Solved in " + attemptsUsed + " attempt(s) out of " + config.getMaxAttempts() + ".");
+                System.out.println("\n [SUCCESS] CONGRATULATIONS! You guessed the correct number (" + secretTarget + ")!");
+                System.out.println("   [SUCCESS] Solved in " + attemptsUsed + " attempt(s) out of " + config.getMaxAttempts() + ".");
                 break;
             } else if (guess < secretTarget) {
-                System.out.println("[HINT] Too Low! Try a higher number.");
+                System.out.println(" [HINT] Too Low! Try a higher number.");
             } else {
-                System.out.println("[HINT] Too High! Try a lower number.");
+                System.out.println(" [HINT] Too High! Try a lower number.");
             }
         }
 
         if (guessedCorrectly) {
             int roundScore = calculateRoundScore(config, attemptsUsed);
             int penalty = (attemptsUsed - 1) * config.getPenaltyPerAttempt();
-            System.out.println("[SCORE] Base: " + config.getBaseScore() + " pts | Penalty (-" + config.getPenaltyPerAttempt() + "/try): -" + penalty + " pts | Awarded: " + roundScore + " pts");
+            System.out.println(" [SCORE] Base: " + config.getBaseScore() + " pts | Penalty (-" + config.getPenaltyPerAttempt() + "/try): -" + penalty + " pts | Awarded: " + roundScore + " pts");
             return roundScore;
         } else {
-            System.out.println("\n[GAME OVER] You ran out of attempts (" + config.getMaxAttempts() + "/" + config.getMaxAttempts() + ")!");
-            System.out.println("[GAME OVER] The secret number was: " + secretTarget);
-            System.out.println("[SCORE] Round failed. Points awarded: 0 pts");
+            System.out.println("\n [GAME OVER] You ran out of attempts (" + config.getMaxAttempts() + "/" + config.getMaxAttempts() + ")!");
+            System.out.println("   [GAME OVER] The secret number was: " + secretTarget);
+            System.out.println(" [SCORE] Round failed. Points awarded: 0 pts");
             return 0;
         }
     }
 
+    /**
+     * User Input Reader & Validator
+     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
-            System.out.print("Enter your guess (1-" + maxRange + "): ");
+            System.out.print(">>> Enter your guess (1-" + maxRange + "): ");
             if (!scanner.hasNextLine()) {
                 return null;
             }
@@ -184,7 +207,7 @@ public class NumberGuessingGame {
             String rawInput = scanner.nextLine().trim();
 
             if (rawInput.isEmpty()) {
-                System.out.println("[ERROR] Input cannot be empty! Please enter a valid integer between 1 and " + maxRange + ".");
+                System.out.println(" [ERROR] Input cannot be empty! Please enter a valid integer between 1 and " + maxRange + ".");
                 continue;
             }
 
@@ -192,36 +215,48 @@ public class NumberGuessingGame {
                 int guess = Integer.parseInt(rawInput);
 
                 if (guess < 1 || guess > maxRange) {
-                    System.out.println("[ERROR] Out of bounds! '" + guess + "' is outside range [1 to " + maxRange + "].");
+                    System.out.println(" [ERROR] Out of bounds! '" + guess + "' is outside range [1 to " + maxRange + "].");
                     continue;
                 }
 
                 if (history.contains(guess)) {
-                    System.out.println("[WARNING] You already guessed " + guess + "! Duplicates do not consume an attempt. Try a new number.");
+                    System.out.println(" [WARNING] You already guessed " + guess + "! Duplicates do not consume an attempt.");
                     continue;
                 }
 
                 return guess;
 
             } catch (NumberFormatException e) {
-                System.out.println("[ERROR] Non-numeric input! '" + rawInput + "' is not a valid integer.");
+                System.out.println(" [ERROR] Non-numeric input! '" + rawInput + "' is not a valid integer.");
             }
         }
     }
 
     /**
-     * Feature 5: Computes attempt-penalized score ensuring non-negative floor bound.
+     * Score Calculation Engine
      */
     private static int calculateRoundScore(DifficultyConfig config, int attemptsUsed) {
         int penalty = (attemptsUsed - 1) * config.getPenaltyPerAttempt();
         int rawScore = config.getBaseScore() - penalty;
-        // Ensure score never drops below 10 for a winning round and is never negative
         return Math.max(rawScore, 10);
     }
 
+    /**
+     * UI Component: Round Score Summary
+     */
+    private static void printRoundScoreSummary(int roundNumber, int roundScore, int totalScore) {
+        System.out.println("\n--------------------------------------------------");
+        System.out.println(" Round " + roundNumber + " Score Earned : " + roundScore + " pts");
+        System.out.println(" Career Total Score   : " + totalScore + " pts");
+        System.out.println("--------------------------------------------------");
+    }
+
+    /**
+     * UI Component: Play Again Prompt
+     */
     private static boolean askPlayAgain(Scanner scanner) {
         while (true) {
-            System.out.print("\nWould you like to play another round? (Y/N): ");
+            System.out.print("\n>>> Would you like to play another round? (Y/N): ");
             if (!scanner.hasNextLine()) {
                 return false;
             }
@@ -232,8 +267,18 @@ public class NumberGuessingGame {
             } else if (input.equalsIgnoreCase("N") || input.equalsIgnoreCase("NO")) {
                 return false;
             } else {
-                System.out.println("[ERROR] Invalid choice '" + input + "'. Please enter 'Y' for Yes or 'N' for No.");
+                System.out.println(" [ERROR] Invalid choice '" + input + "'. Please enter 'Y' for Yes or 'N' for No.");
             }
         }
+    }
+
+    /**
+     * UI Component: Final Game Exit Summary
+     */
+    private static void printFinalSummary(int totalScore) {
+        System.out.println("\n==================================================");
+        System.out.println("           THANKS FOR PLAYING!");
+        System.out.println("        Final Career Total Score: " + totalScore + " pts");
+        System.out.println("==================================================");
     }
 }
