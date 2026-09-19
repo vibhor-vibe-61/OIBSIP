@@ -30,8 +30,19 @@ OIBSIP/
     ├── src/
     │   └── NumberGuessingGame.java     <-- Source code file
     ├── screenshots/                     <-- Demo execution screenshots
+    │   ├── Screenshot 2026-09-19 151347.png
+    │   ├── Screenshot 2026-09-19 151402.png
+    │   └── Screenshot 2026-09-19 151445.png
     └── README.md                       <-- Project documentation
 ```
+
+---
+
+## 📷 Screenshots
+
+| Game Execution & Gameplay | Victory & Score Breakdown | Final Game Exit Summary |
+| :---: | :---: | :---: |
+| ![Gameplay](./screenshots/Screenshot%202026-09-19%20151347.png) | ![Score Breakdown](./screenshots/Screenshot%202026-09-19%20151402.png) | ![Final Exit](./screenshots/Screenshot%202026-09-19%20151445.png) |
 
 ---
 
