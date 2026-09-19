@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- * Feature 1: Difficulty Level System Implementation
+ * Feature 2: Input Validation & Crash Prevention Engine
  */
 public class NumberGuessingGame {
 
@@ -53,7 +53,7 @@ public class NumberGuessingGame {
 
             DifficultyConfig config = selectDifficulty(scanner);
             if (config == null) {
-                System.out.println("[SYSTEM] Program terminated.");
+                System.out.println("[SYSTEM] Program terminated gracefully.");
                 break;
             }
 
@@ -94,7 +94,7 @@ public class NumberGuessingGame {
     }
 
     /**
-     * Prompts user for difficulty selection and returns selected DifficultyConfig.
+     * Feature 2: Validates difficulty selection against invalid options and non-numeric entries.
      */
     private static DifficultyConfig selectDifficulty(Scanner scanner) {
         while (true) {
@@ -110,6 +110,11 @@ public class NumberGuessingGame {
 
             String input = scanner.nextLine().trim();
 
+            if (input.isEmpty()) {
+                System.out.println("[ERROR] Choice cannot be empty. Please enter 1, 2, or 3.");
+                continue;
+            }
+
             switch (input) {
                 case "1":
                     return new DifficultyConfig("Easy", 50, 10, 100, 10);
@@ -118,7 +123,7 @@ public class NumberGuessingGame {
                 case "3":
                     return new DifficultyConfig("Hard", 200, 5, 200, 25);
                 default:
-                    System.out.println("[!] Invalid selection! Please enter 1, 2, or 3.");
+                    System.out.println("[ERROR] Invalid choice '" + input + "'. Please enter 1, 2, or 3.");
             }
         }
     }
@@ -165,6 +170,9 @@ public class NumberGuessingGame {
         }
     }
 
+    /**
+     * Feature 2: Safe input parser rejecting non-integer text, empty lines, and out-of-range bounds.
+     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
             System.out.print("Enter your guess (1-" + maxRange + "): ");
@@ -172,29 +180,29 @@ public class NumberGuessingGame {
                 return null;
             }
 
-            String input = scanner.nextLine().trim();
+            String rawInput = scanner.nextLine().trim();
 
-            if (input.isEmpty()) {
-                System.out.println("[!] Input cannot be empty. Please enter an integer.");
+            if (rawInput.isEmpty()) {
+                System.out.println("[ERROR] Input cannot be empty! Please enter a valid integer between 1 and " + maxRange + ".");
                 continue;
             }
 
             try {
-                int guess = Integer.parseInt(input);
+                int guess = Integer.parseInt(rawInput);
 
                 if (guess < 1 || guess > maxRange) {
-                    System.out.println("[!] Out of bounds! Please enter a number between 1 and " + maxRange + ".");
+                    System.out.println("[ERROR] Out of bounds! '" + guess + "' is outside range [1 to " + maxRange + "].");
                     continue;
                 }
 
                 if (history.contains(guess)) {
-                    System.out.println("[!] You already guessed " + guess + "!");
+                    System.out.println("[WARNING] You already guessed " + guess + "!");
                 }
 
                 return guess;
 
             } catch (NumberFormatException e) {
-                System.out.println("[!] Invalid input format. Please enter a valid integer.");
+                System.out.println("[ERROR] Non-numeric input! '" + rawInput + "' is not a valid integer.");
             }
         }
     }
@@ -205,6 +213,9 @@ public class NumberGuessingGame {
         return Math.max(score, 10);
     }
 
+    /**
+     * Feature 2: Validates play-again input prompt against unexpected responses.
+     */
     private static boolean askPlayAgain(Scanner scanner) {
         while (true) {
             System.out.print("\nWould you like to play another round? (Y/N): ");
@@ -218,7 +229,7 @@ public class NumberGuessingGame {
             } else if (input.equalsIgnoreCase("N") || input.equalsIgnoreCase("NO")) {
                 return false;
             } else {
-                System.out.println("[!] Invalid input. Please enter 'Y' for Yes or 'N' for No.");
+                System.out.println("[ERROR] Invalid choice '" + input + "'. Please enter 'Y' for Yes or 'N' for No.");
             }
         }
     }
