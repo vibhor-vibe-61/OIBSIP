@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Oasis Infobyte Java Development Internship - Task 2
  * Project: Number Guessing Game
  * Author: Tekriwal Vibhor Vijay
- * Feature 4: Previous Guess Tracking & Duplicate Protection
+ * Feature 5: Multi-Round Score System & Non-Negative Score Engine
  */
 public class NumberGuessingGame {
 
@@ -62,14 +62,14 @@ public class NumberGuessingGame {
             System.out.println("\n[SYSTEM] Difficulty selected: " + config.getName().toUpperCase());
             System.out.println("[SYSTEM] Target range      : 1 to " + config.getMaxRange());
             System.out.println("[SYSTEM] Attempts granted   : " + config.getMaxAttempts());
-            System.out.println("[SYSTEM] Potential score   : " + config.getBaseScore() + " pts");
+            System.out.println("[SYSTEM] Potential base score: " + config.getBaseScore() + " pts");
 
             int roundScore = playRound(scanner, config, secretTarget);
             totalScore += roundScore;
 
             System.out.println("\n------------------------------------------");
-            System.out.println("Round " + roundNumber + " Score : " + roundScore);
-            System.out.println("Total Score   : " + totalScore + " points");
+            System.out.println("Round " + roundNumber + " Score Earned : " + roundScore + " points");
+            System.out.println("Cumulative Total Score : " + totalScore + " points");
             System.out.println("------------------------------------------");
 
             keepPlaying = askPlayAgain(scanner);
@@ -125,9 +125,6 @@ public class NumberGuessingGame {
         }
     }
 
-    /**
-     * Feature 4: Uses ArrayList<Integer> history to display past attempts & prevents duplicate attempt deduction.
-     */
     private static int playRound(Scanner scanner, DifficultyConfig config, int secretTarget) {
         List<Integer> history = new ArrayList<>();
         int attemptsUsed = 0;
@@ -165,17 +162,18 @@ public class NumberGuessingGame {
         }
 
         if (guessedCorrectly) {
-            return calculateRoundScore(config, attemptsUsed);
+            int roundScore = calculateRoundScore(config, attemptsUsed);
+            int penalty = (attemptsUsed - 1) * config.getPenaltyPerAttempt();
+            System.out.println("[SCORE] Base: " + config.getBaseScore() + " pts | Penalty (-" + config.getPenaltyPerAttempt() + "/try): -" + penalty + " pts | Awarded: " + roundScore + " pts");
+            return roundScore;
         } else {
             System.out.println("\n[GAME OVER] You ran out of attempts (" + config.getMaxAttempts() + "/" + config.getMaxAttempts() + ")!");
             System.out.println("[GAME OVER] The secret number was: " + secretTarget);
+            System.out.println("[SCORE] Round failed. Points awarded: 0 pts");
             return 0;
         }
     }
 
-    /**
-     * Feature 4: Validates guess against previous history list. Rejects duplicate inputs without consuming attempts.
-     */
     private static Integer getUserGuess(Scanner scanner, List<Integer> history, int maxRange) {
         while (true) {
             System.out.print("Enter your guess (1-" + maxRange + "): ");
@@ -211,10 +209,14 @@ public class NumberGuessingGame {
         }
     }
 
+    /**
+     * Feature 5: Computes attempt-penalized score ensuring non-negative floor bound.
+     */
     private static int calculateRoundScore(DifficultyConfig config, int attemptsUsed) {
         int penalty = (attemptsUsed - 1) * config.getPenaltyPerAttempt();
-        int score = config.getBaseScore() - penalty;
-        return Math.max(score, 10);
+        int rawScore = config.getBaseScore() - penalty;
+        // Ensure score never drops below 10 for a winning round and is never negative
+        return Math.max(rawScore, 10);
     }
 
     private static boolean askPlayAgain(Scanner scanner) {
